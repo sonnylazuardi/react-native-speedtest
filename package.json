@@ -1,0 +1,16 @@
+{
+  "name": "speedtest",
+  "version": "0.0.0",
+  "description": "Simple speedtest app",
+  "author": null,
+  "private": true,
+  "main": "main.js",
+  "dependencies": {
+    "@exponent/vector-icons": "~4.0.0",
+    "exponent": "~13.1.0",
+    "react": "~15.4.0",
+    "react-native": "https://github.com/exponent/react-native/archive/sdk-13.0.3.tar.gz",
+    "react-native-simple-gauge": "^0.1.2",
+    "react-navigation": "^1.0.0-beta.1"
+  }
+}
