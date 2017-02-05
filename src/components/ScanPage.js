@@ -8,12 +8,21 @@ import {
     TouchableOpacity
 } from 'react-native';
 import { AnimatedGaugeProgress, GaugeProgress } from 'react-native-simple-gauge';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as actions from '../actions';
+
 const Svg = Exponent.Components.Svg;
 const {Path} = Svg;
 
+@connect(state => ({
+    scan: state.scan
+}), dispatch => (
+    bindActionCreators(actions, dispatch)
+))
 class ScanPage extends React.Component {
     static navigationOptions = {
-        title: 'SPEEDTEST - Scan',
+        title: 'Scan',
         tabBar: {
             label: 'Scan',
         }
@@ -39,8 +48,7 @@ class ScanPage extends React.Component {
     handleNavigationChange = (navState) => {
         if (navState.title) {
             var data = navState.title.split('|')
-            if (data.length > 2) {
-                console.log(data);
+            if (data.length > 2 && !this.state.finished) {
                 var ping = parseFloat(data[0]) || 0;
                 var download = parseFloat(data[1]) || 0;
                 var upload = parseFloat(data[2]) || 0;
@@ -53,20 +61,32 @@ class ScanPage extends React.Component {
                 var provider = data[9];
                 var location = data[10];
                 this.setState({ping, download, upload, status, speed, metric, speedoValue, chartDownload, chartUpload, provider, location});
+
+                if (status == 'Ready') {
+                    this.setState({
+                        finished: true
+                    }, () => {
+                        this.props.addScan({
+                            timestamp: Date.now(),
+                            ping,
+                            download,
+                            upload,
+                            provider,
+                            location
+                        })
+                    })
+                }
             }
         }
     };
     scanAgain() {
-        console.log(this.refs['webview']);
+        this.setState({
+            finished: false
+        })
         this.refs['webview'].reload();
     }
     render() {
-        // let percentage = 0;
-        // if (this.state.speedUnit == 'Kbps') {
-        //     percentage = this.state.speed / 1000 * 100;
-        // } else {
-        //     percentage = this.state.speed / 30 * 100; 
-        // }
+        console.log(this.props.scan);
         
         return (
             <View style={styles.container}>
@@ -77,27 +97,34 @@ class ScanPage extends React.Component {
                 <Text>{this.state.ping} {this.state.download} {this.state.upload}</Text>
                 <Text>{this.state.status} {this.state.speed} {this.state.metric}</Text>
                 <Text>{this.state.provider} {this.state.location}</Text>
-                <Svg
-                    height="200"
-                    width="200"
-                >
-                    <Path d={this.state.chartDownload} />
-                </Svg>
-                <Svg
-                    height="200"
-                    width="200"
-                >
-                    <Path d={this.state.chartUpload} />
-                </Svg>
+
+                <View style={{flexDirection: 'row'}}>
+                    <View style={{flex: 1}}>
+                        <Svg
+                            height="200"
+                            width="200"
+                        >
+                            <Path d={this.state.chartDownload} />
+                        </Svg>
+                    </View>
+                    <View style={{flex: 1}}>
+                        <Svg
+                            height="200"
+                            width="200"
+                        >
+                            <Path d={this.state.chartUpload} />
+                        </Svg>
+                    </View>
+                </View>
                 
                 <AnimatedGaugeProgress
-                  size={250}
-                  width={15}
-                  rotation={90}
-                  cropDegree={90}
-                  fill={this.state.speedoValue}
-                  tintColor="#00e0ff"
-                  backgroundColor="#3d5875" />
+                    size={250}
+                    width={15}
+                    rotation={90}
+                    cropDegree={90}
+                    fill={this.state.speedoValue}
+                    tintColor="#00e0ff"
+                    backgroundColor="#3d5875" />
                 <View style={{position: 'absolute', top: 0, left: 0}}>
                     <WebView
                         ref="webview"
@@ -131,13 +158,16 @@ class ScanPage extends React.Component {
                                 var location = locationSplit[1];
                                 document.title = ping + '|' + download + '|' + upload + '|' + realTimeDescription + '|' + realTimeValue + '|' + realTimeUnit + '|' + speedoValue + '|' + chartDownload + '|' + chartUpload + '|' + provider + '|' + location;
                                 window.location.hash = ++i;
+
+                                if (realTimeDescription == 'Ready') {
+                                    clearInterval(checkValue);
+                                }
                             }, 500);
 
                             var checkLoaded = setInterval(function() {
                                 var finished = document.getElementById('speedo-start').getAttribute('style') != 'display: none;'
                                 
                                 if (finished) {
-                                    alert('hoi')
                                     document.getElementById('speedo-start').click();
                                     clearInterval(checkLoaded);
                                 }
