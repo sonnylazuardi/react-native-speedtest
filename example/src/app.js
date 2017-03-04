@@ -1,7 +1,11 @@
 import React from 'react';
+import { StatusBar, View, StyleSheet } from 'react-native';
 import { TabNavigator, addNavigationHelpers } from 'react-navigation';
-import ScanPage from './components/ScanPage';
-import HistoryPage from './components/HistoryPage';
+import { Font } from 'exponent';
+
+import ScanScreen from './screens/ScanScreen';
+import HistoryScreen from './screens/HistoryScreen';
+import MapScreen from './screens/MapScreen';
 
 import * as storage from 'redux-storage';
 import { createStore, applyMiddleware, combineReducers } from 'redux';
@@ -9,13 +13,18 @@ import { connect, Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import * as reducers from './reducers';
 import createEngine from 'redux-storage-engine-reactnativeasyncstorage';
+import Loader from './components/Loader';
 
 const AppNavigator = TabNavigator({
-    Scan: {screen: ScanPage},
-    History: {screen: HistoryPage}
+    Scan: {screen: ScanScreen},
+    History: {screen: HistoryScreen},
+    Map: {screen: MapScreen}
 }, {
     tabBarOptions: {
-        activeTintColor: '#e91e63',
+        showLabel: false,
+        style: {
+            backgroundColor: '#0f151e'
+        }
     },
 });
 
@@ -30,12 +39,26 @@ const reducer = storage.reducer(combineReducers({
     nav: state.nav,
 }))
 class AppWithNavigationState extends React.Component {
+    state = {
+        fontLoaded: false
+    }
+    componentDidMount() {
+        Font.loadAsync({
+            'bebas-neue': require('./assets/fonts/BebasNeue.ttf'),
+        }).then(() => this.setState({fontLoaded: true}))
+    }
     render() {
         return (
-            <AppNavigator navigation={addNavigationHelpers({
-                dispatch: this.props.dispatch,
-                state: this.props.nav,
-            })} />
+            <View style={styles.container}>
+                <StatusBar barStyle="light-content" />
+                {!this.state.fontLoaded ?
+                    <Loader />
+                    : 
+                    <AppNavigator navigation={addNavigationHelpers({
+                        dispatch: this.props.dispatch,
+                        state: this.props.nav,
+                    })} />}
+            </View>
         );
     }
 }
@@ -60,5 +83,12 @@ class App extends React.Component {
         );
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#161f2b',
+    }
+})
 
 export default App;

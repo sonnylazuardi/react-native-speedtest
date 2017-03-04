@@ -17,7 +17,7 @@ import * as actions from '../actions';
 }), dispatch => (
     bindActionCreators(actions, dispatch)
 ))
-class HistoryPage extends React.Component {
+class HistoryScreen extends React.Component {
     static navigationOptions = {
         title: 'History',
         tabBar: {
@@ -52,4 +52,4 @@ class HistoryPage extends React.Component {
     }
 }
 
-export default HistoryPage;
+export default HistoryScreen;

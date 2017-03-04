@@ -1,3 +1,4 @@
-node_modules/**/*
-.exponent/*
-npm-debug.*
+example/node_modules/**/*
+example/exponent/*
+example/npm-debug.*
+example/dist/*
