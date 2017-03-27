@@ -1,0 +1,29 @@
+{
+  "name": "react-native-speedtest",
+  "version": "0.0.1",
+  "description": "Speedtest Component for React Native",
+  "author": "Sonny Lazuardi",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sonnylazuardi/react-native-speedtest.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sonnylazuardi/react-native-speedtest/issues"
+  },
+  "keywords": [
+    "react-native",
+    "speed-test",
+    "speedtest",
+    "speed",
+    "speed-meter",
+    "speedmeter"
+  ],
+  "dependencies": {
+    "react-native-simple-gauge": "^0.1.2"
+  }
+}

@@ -2,3 +2,6 @@ example/node_modules/**/*
 example/exponent/*
 example/npm-debug.*
 example/dist/*
+
+node_modules
+npm-debug.log
